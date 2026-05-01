@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Website Generator</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      padding: 40px;
+      background: #f5f5f5;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: blue;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    iframe {
+      width: 100%;
+      height: 400px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>Generate Website with AI 🚀</h2>
+
+<textarea id="prompt" placeholder="Describe your website..."></textarea>
+
+<br><br>
+
+<button onclick="generateSite()">Generate</button>
+
+<iframe id="preview"></iframe>
+
+<script>
+async function generateSite() {
+  const prompt = document.getElementById("prompt").value;
+
+  try {
+    const res = await fetch(" https://endorphin-camping-quote.ngrok-free.dev/webhook/596a1b4c-a3f3-4c70-a2de-80750047c383n8n starthttps://endorphin-camping-quote.ngrok-free.dev/webhook/596a1b4c-a3f3-4c70-a2de-80750047c383", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt: prompt })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("preview").srcdoc = data.html;
+
+  } catch (error) {
+    alert("Error: " + error.message);
+    console.log(error);
+  }
+}
+</script>
