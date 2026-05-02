@@ -2,37 +2,58 @@ import streamlit as st
 
 st.set_page_config(page_title="Early Access", layout="wide")
 
-# ---- HERO SECTION ----
+# ---- CUSTOM CSS ----
 st.markdown("""
 <style>
-.big-font {
-    font-size:50px !important;
-    font-weight:700;
+.main-title {
+    font-size: 42px;
+    font-weight: 600;
+    margin-bottom: 10px;
 }
-.subtext {
-    font-size:20px;
-    color:gray;
+.subtitle {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 30px;
+}
+.section-title {
+    font-size: 26px;
+    font-weight: 600;
+    margin-top: 40px;
+}
+.card {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    margin-bottom: 15px;
+}
+.footer {
+    text-align: center;
+    color: gray;
+    font-size: 14px;
+    margin-top: 50px;
 }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<p class="big-font">🚀 Something Powerful is Coming</p>', unsafe_allow_html=True)
-st.markdown('<p class="subtext">Built for students & professionals who want real opportunities</p>', unsafe_allow_html=True)
+# ---- HERO SECTION ----
+st.markdown('<div class="main-title">Early Access Platform for Data Science Opportunities</div>', unsafe_allow_html=True)
 
-col1, col2 = st.columns([1,1])
+st.markdown('<div class="subtitle">A curated system designed to help you discover relevant opportunities, build practical skills, and accelerate your career growth.</div>', unsafe_allow_html=True)
+
+col1, col2 = st.columns([1.2, 1])
 
 with col1:
     st.markdown("""
-### Why join?
+    **What you can expect:**
 
-- 🎯 Curated opportunities (not spam)
-- 📊 Real-world projects
-- 🚀 Faster career growth
-""")
+    - Curated job opportunities tailored to your profile  
+    - Real-world project exposure  
+    - Structured updates to help you stay ahead  
+    """)
 
-    if st.button("👉 Join Waitlist"):
+    if st.button("Request Invitation"):
         st.markdown(
-            "[Click here to join](https://docs.google.com/forms/d/e/1FAIpQLSdlPeC5iQCiD22ngyPHS9wOrenztnz-KEyCq1Yz1Yz7nAHYeA/viewform?usp=header)"
+            "[Click here to join the waitlist](https://docs.google.com/forms/d/e/1FAIpQLSdlPeC5iQCiD22ngyPHS9wOrenztnz-KEyCq1Yz1Yz7nAHYeA/viewform?usp=header)"
         )
 
 with col2:
@@ -40,45 +61,56 @@ with col2:
 
 st.markdown("---")
 
-# ---- INTERACTIVE SECTION ----
-st.markdown("## 🔍 What will you get?")
+# ---- FEATURES SECTION ----
+st.markdown('<div class="section-title">Key Features</div>', unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs(["Jobs", "Projects", "Growth"])
+col1, col2, col3 = st.columns(3)
 
-with tab1:
-    st.write("Get curated Data Science jobs daily — no noise, only relevant roles.")
+with col1:
+    st.markdown('<div class="card"><b>Curated Listings</b><br>Relevant opportunities filtered for quality and relevance.</div>', unsafe_allow_html=True)
 
-with tab2:
-    st.write("Hands-on projects that actually build your portfolio.")
+with col2:
+    st.markdown('<div class="card"><b>Project-Based Learning</b><br>Hands-on projects aligned with industry expectations.</div>', unsafe_allow_html=True)
 
-with tab3:
-    st.write("Guidance, resources, and updates to grow faster.")
+with col3:
+    st.markdown('<div class="card"><b>Continuous Updates</b><br>Stay informed with structured and timely insights.</div>', unsafe_allow_html=True)
 
 st.markdown("---")
 
-# ---- FAQ (Interactive Expanders) ----
-st.markdown("## ❓ Frequently Asked Questions")
+# ---- INFORMATION SECTION ----
+st.markdown('<div class="section-title">How It Works</div>', unsafe_allow_html=True)
 
-with st.expander("Is this free?"):
-    st.write("Yes, early access is completely free.")
+st.markdown("""
+1. Register your interest using the waitlist form  
+2. Get onboarded as part of the early access group  
+3. Receive curated updates and opportunities directly  
+""")
 
-with st.expander("Who is this for?"):
-    st.write("Students, job seekers, and professionals in Data Science & tech.")
+st.markdown("---")
 
-with st.expander("When will I get access?"):
-    st.write("Soon after signup. Early users will be notified first.")
+# ---- FAQ SECTION ----
+st.markdown('<div class="section-title">Frequently Asked Questions</div>', unsafe_allow_html=True)
+
+with st.expander("Is there any cost involved?"):
+    st.write("Early access is currently free for selected users.")
+
+with st.expander("Who should register?"):
+    st.write("Students and professionals interested in data science and related fields.")
+
+with st.expander("When will access be granted?"):
+    st.write("Selected users will be notified via email.")
 
 st.markdown("---")
 
 # ---- FINAL CTA ----
-st.markdown("## 🔐 Limited Early Access")
+st.markdown('<div class="section-title">Request Access</div>', unsafe_allow_html=True)
 
-st.warning("Only a few early spots available!")
+st.write("Submit your details to be considered for early access.")
 
-if st.button("🚀 Request Invite Now"):
+if st.button("Join Waitlist"):
     st.markdown(
-        "[Join the waitlist here](https://docs.google.com/forms/d/e/1FAIpQLSdlPeC5iQCiD22ngyPHS9wOrenztnz-KEyCq1Yz1Yz7nAHYeA/viewform?usp=header)"
+        "[Submit your details](https://docs.google.com/forms/d/e/1FAIpQLSdlPeC5iQCiD22ngyPHS9wOrenztnz-KEyCq1Yz1Yz7nAHYeA/viewform?usp=header)"
     )
 
-st.markdown("---")
-st.markdown("⚡ Built with ❤️ using Streamlit")
+# ---- FOOTER ----
+st.markdown('<div class="footer">© 2026 | Early Access Platform</div>', unsafe_allow_html=True)
