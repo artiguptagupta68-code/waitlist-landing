@@ -55,6 +55,11 @@ st.markdown("""
     background: linear-gradient(90deg, #111, #333);
     border-radius: 8px;
     text-decoration: none;
+    transition: 0.3s;
+}
+.cta-button:hover {
+    background: linear-gradient(90deg, #000, #222);
+    transform: scale(1.04);
 }
 
 .footer {
@@ -72,27 +77,38 @@ interest = st.selectbox(
     ["Data Science", "Software Development", "Marketing", "Finance"]
 )
 
-# ---------- DYNAMIC CONTENT ----------
+# ---------- CONTENT MAP (TEXT + IMAGE) ----------
 content_map = {
     "Data Science": {
         "title": "Early Access for Data Science Opportunities",
-        "desc": "Curated roles, real-world projects, and structured updates tailored for data professionals."
+        "desc": "Curated roles, real-world projects, and structured updates tailored for data professionals.",
+        "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71"
     },
     "Software Development": {
         "title": "Early Access for Software Development Opportunities",
-        "desc": "Engineering roles, coding projects, and industry-focused technical updates."
+        "desc": "Engineering roles, coding projects, and industry-focused technical updates.",
+        "image": "https://images.unsplash.com/photo-1518770660439-4636190af475"
     },
     "Marketing": {
         "title": "Early Access for Marketing Opportunities",
-        "desc": "Campaign strategies, growth insights, and real-world marketing exposure."
+        "desc": "Campaign strategies, growth insights, and real-world marketing exposure.",
+        "image": "https://images.unsplash.com/photo-1557838923-2985c318be48"
     },
     "Finance": {
         "title": "Early Access for Finance Opportunities",
-        "desc": "Financial roles, market insights, and domain-specific learning resources."
+        "desc": "Financial roles, market insights, and domain-specific learning resources.",
+        "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f"
     }
 }
 
 selected = content_map[interest]
+
+# ---------- FORM LINK (WITH INTEREST PASSING) ----------
+base_form_url = "https://docs.google.com/forms/d/e/1FAIpQLSdlPeC5iQCiD22ngyPHS9wOrenztnz-KEyCq1Yz1Yz7nAHYeA/viewform"
+encoded_interest = urllib.parse.quote(interest)
+
+# ⚠️ Replace entry.123456 with your actual field ID
+form_link = f"{base_form_url}?usp=pp_url&entry.123456={encoded_interest}"
 
 # ---------- HERO SECTION ----------
 col1, col2 = st.columns([1.2, 1])
@@ -107,12 +123,6 @@ with col1:
     - Continuous updates  
     """)
 
-    # FORM LINK (PASSING INTEREST)
-    base_form_url = "https://docs.google.com/forms/d/e/1FAIpQLSdlPeC5iQCiD22ngyPHS9wOrenztnz-KEyCq1Yz1Yz7nAHYeA/viewform"
-    encoded_interest = urllib.parse.quote(interest)
-
-    form_link = f"{base_form_url}?usp=pp_url&entry.123456={encoded_interest}"
-
     st.markdown(f"""
     <div class="cta-container">
         <a class="cta-button" href="{form_link}" target="_blank">
@@ -122,7 +132,7 @@ with col1:
     """, unsafe_allow_html=True)
 
 with col2:
-    st.image("https://images.unsplash.com/photo-1551288049-bebda4e38f71", use_container_width=True)
+    st.image(selected["image"], use_container_width=True)
 
 # ---------- FEATURES ----------
 st.markdown("<div class='section-title'>Key Features</div>", unsafe_allow_html=True)
