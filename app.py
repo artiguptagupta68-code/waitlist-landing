@@ -6,29 +6,10 @@ st.set_page_config(page_title="Early Access Platform", layout="wide")
 # ---------- GLOBAL STYLES ----------
 st.markdown("""
 <style>
-.block-container {
-    max-width: 1100px;
-    padding-top: 2rem;
-}
-
-.title {
-    font-size: 44px;
-    font-weight: 700;
-}
-
-.subtitle {
-    font-size: 18px;
-    color: #555;
-    margin-top: 10px;
-    margin-bottom: 30px;
-}
-
-.section-title {
-    font-size: 26px;
-    font-weight: 600;
-    margin-top: 50px;
-    margin-bottom: 20px;
-}
+.block-container { max-width: 1100px; padding-top: 2rem; }
+.title { font-size: 44px; font-weight: 700; }
+.subtitle { font-size: 18px; color: #555; margin-top: 10px; margin-bottom: 30px; }
+.section-title { font-size: 26px; font-weight: 600; margin-top: 50px; margin-bottom: 20px; }
 
 .card {
     padding: 20px;
@@ -41,25 +22,17 @@ st.markdown("""
     box-shadow: 0px 6px 18px rgba(0,0,0,0.08);
 }
 
-.cta-container {
-    text-align: center;
-    margin-top: 30px;
-}
+.cta-container { text-align: center; margin-top: 30px; }
 
 .cta-button {
     display: inline-block;
-    padding: 18px 45px;
-    font-size: 18px;
+    padding: 20px 50px;
+    font-size: 20px;
     font-weight: 600;
     color: white;
     background: linear-gradient(90deg, #111, #333);
-    border-radius: 8px;
+    border-radius: 10px;
     text-decoration: none;
-    transition: 0.3s;
-}
-.cta-button:hover {
-    background: linear-gradient(90deg, #000, #222);
-    transform: scale(1.04);
 }
 
 .footer {
@@ -71,13 +44,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- INTEREST SELECTION ----------
-interest = st.selectbox(
-    "Select your area of interest",
-    ["Data Science", "Software Development", "Marketing", "Finance"]
-)
+# ---------- GET USER INTEREST FROM URL ----------
+query_params = st.query_params
 
-# ---------- CONTENT MAP (TEXT + IMAGE) ----------
+interest = query_params.get("interest", "Data Science")
+
+# Normalize input (important)
+interest = interest.replace("+", " ")
+
+# ---------- CONTENT MAP ----------
 content_map = {
     "Data Science": {
         "title": "Early Access for Data Science Opportunities",
@@ -101,16 +76,19 @@ content_map = {
     }
 }
 
+# Fallback if unknown interest
+if interest not in content_map:
+    interest = "Data Science"
+
 selected = content_map[interest]
 
-# ---------- FORM LINK (WITH INTEREST PASSING) ----------
+# ---------- FORM LINK ----------
 base_form_url = "https://docs.google.com/forms/d/e/1FAIpQLSdlPeC5iQCiD22ngyPHS9wOrenztnz-KEyCq1Yz1Yz7nAHYeA/viewform"
 encoded_interest = urllib.parse.quote(interest)
 
-# ⚠️ Replace entry.123456 with your actual field ID
 form_link = f"{base_form_url}?usp=pp_url&entry.123456={encoded_interest}"
 
-# ---------- HERO SECTION ----------
+# ---------- HERO ----------
 col1, col2 = st.columns([1.2, 1])
 
 with col1:
@@ -140,39 +118,13 @@ st.markdown("<div class='section-title'>Key Features</div>", unsafe_allow_html=T
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.markdown("<div class='card'><b>Curated Listings</b><br><br>Filtered opportunities based on relevance.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='card'><b>Curated Listings</b><br><br>Filtered opportunities.</div>", unsafe_allow_html=True)
 
 with col2:
-    st.markdown("<div class='card'><b>Project-Based Learning</b><br><br>Hands-on experience aligned with industry.</div>", unsafe_allow_html=True)
+    st.markdown("<div class='card'><b>Project-Based Learning</b><br><br>Hands-on experience.</div>", unsafe_allow_html=True)
 
 with col3:
-    st.markdown("<div class='card'><b>Continuous Updates</b><br><br>Stay informed with structured insights.</div>", unsafe_allow_html=True)
-
-# ---------- HOW IT WORKS ----------
-st.markdown("<div class='section-title'>How It Works</div>", unsafe_allow_html=True)
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.markdown("<div class='card'>1. Select your interest</div>", unsafe_allow_html=True)
-
-with col2:
-    st.markdown("<div class='card'>2. Register via the form</div>", unsafe_allow_html=True)
-
-with col3:
-    st.markdown("<div class='card'>3. Receive tailored updates</div>", unsafe_allow_html=True)
-
-# ---------- FAQ ----------
-st.markdown("<div class='section-title'>Frequently Asked Questions</div>", unsafe_allow_html=True)
-
-with st.expander("Is there any cost involved?"):
-    st.write("Early access is currently free.")
-
-with st.expander("Who is this for?"):
-    st.write("Students and professionals across different domains.")
-
-with st.expander("How will I receive updates?"):
-    st.write("Updates will be shared via email.")
+    st.markdown("<div class='card'><b>Continuous Updates</b><br><br>Stay informed.</div>", unsafe_allow_html=True)
 
 # ---------- FINAL CTA ----------
 st.markdown("<div class='section-title'>Request Access</div>", unsafe_allow_html=True)
