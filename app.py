@@ -1,115 +1,107 @@
 import streamlit as st
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from datetime import datetime
+import re
 
+# ---------- PAGE CONFIG ----------
 st.set_page_config(page_title="Early Access Platform", layout="centered")
 
-# ---------- GLOBAL STYLES ----------
+# ---------- STYLING ----------
 st.markdown("""
 <style>
 body {
-    background-color: #f5f7fa;
+    background-color: #f4f6f9;
 }
 
 .container {
-    background-color: white;
+    background: white;
     padding: 40px;
     border-radius: 12px;
-    box-shadow: 0px 8px 24px rgba(0,0,0,0.06);
+    box-shadow: 0px 8px 24px rgba(0,0,0,0.05);
     margin-top: 60px;
 }
 
 .title {
-    font-size: 34px;
+    font-size: 32px;
     font-weight: 700;
     color: #111;
-    margin-bottom: 10px;
 }
 
 .subtitle {
-    font-size: 16px;
+    font-size: 15px;
     color: #666;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
-.input-label {
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: #333;
-}
-
-.stTextInput > div > div > input {
+.stTextInput input {
     border-radius: 8px;
-    padding: 12px;
+    padding: 10px;
     border: 1px solid #ddd;
 }
 
-.cta-button {
-    display: inline-block;
+.submit-btn button {
     width: 100%;
-    text-align: center;
-    padding: 16px;
-    background-color: #111;
-    color: white;
-    text-decoration: none;
+    padding: 14px;
     border-radius: 10px;
-    font-size: 18px;
+    background-color: black;
+    color: white;
     font-weight: 600;
-    margin-top: 20px;
-    transition: all 0.2s ease;
-}
-
-.cta-button:hover {
-    background-color: #333;
-}
-
-.footer {
-    text-align: center;
-    font-size: 13px;
-    color: #999;
-    margin-top: 40px;
+    font-size: 16px;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- MAIN CONTAINER ----------
+# ---------- GOOGLE SHEETS SETUP ----------
+scope = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive"
+]
+
+creds = ServiceAccountCredentials.from_json_keyfile_name(
+    "credentials.json", scope
+)
+
+client = gspread.authorize(creds)
+
+sheet = client.open_by_key("1QNd4f-LTV8qurUgVdTVl543iw5FcrKAQtLdhmQsFYVk").sheet1
+
+# ---------- UI ----------
 st.markdown("<div class='container'>", unsafe_allow_html=True)
 
-# ---------- INPUT ----------
-st.markdown("<div class='input-label'>Area of Interest</div>", unsafe_allow_html=True)
-interest = st.text_input("", placeholder="e.g., Data Science, Finance, Marketing")
+st.markdown("<div class='title'>Early Access Platform</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Submit your details to request early access tailored to your domain.</div>", unsafe_allow_html=True)
 
-# ---------- DYNAMIC CONTENT ----------
-if interest.strip():
-    st.markdown(
-        f"<div class='title'>Early Access for {interest}</div>",
-        unsafe_allow_html=True
-    )
+# ---------- FORM ----------
+with st.form("waitlist_form"):
 
-    st.markdown(
-        "<div class='subtitle'>Submit your request to receive early access tailored to your domain.</div>",
-        unsafe_allow_html=True
-    )
+    name = st.text_input("Full Name")
+    email = st.text_input("Email Address")
+    interest = st.text_input("Area of Interest")
 
-    form_url = "https://docs.google.com/forms/d/e/1FAIpQLSdlPeC5iQCiD22ngyPHS9wOrenztnz-KEyCq1Yz1Yz7nAHYeA/viewform"
+    submit = st.form_submit_button("Request Invitation")
 
-    st.markdown(
-        f'<a href="{form_url}" target="_blank" class="cta-button">Request Invitation</a>',
-        unsafe_allow_html=True
-    )
+# ---------- VALIDATION ----------
+def is_valid_email(email):
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
-else:
-    st.markdown(
-        "<div class='title'>Early Access Platform</div>",
-        unsafe_allow_html=True
-    )
+# ---------- SUBMIT LOGIC ----------
+if submit:
+    if not name or not email or not interest:
+        st.error("All fields are required.")
+    
+    elif not is_valid_email(email):
+        st.error("Please enter a valid email address.")
+    
+    else:
+        try:
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    st.markdown(
-        "<div class='subtitle'>Enter your area of interest to proceed with your request.</div>",
-        unsafe_allow_html=True
-    )
+            sheet.append_row([name, email, interest, timestamp])
 
-# ---------- CLOSE CONTAINER ----------
+            st.success("Your request has been submitted successfully.")
+
+        except Exception as e:
+            st.error("Submission failed. Please try again.")
+
 st.markdown("</div>", unsafe_allow_html=True)
-
-# ---------- FOOTER ----------
-st.markdown("<div class='footer'>© 2026 Early Access Platform</div>", unsafe_allow_html=True)
