@@ -1,77 +1,79 @@
 import streamlit as st
-import requests
+import urllib.parse
 
-st.set_page_config(page_title="Early Access Platform", layout="centered")
+# ---------- PAGE CONFIG ----------
+st.set_page_config(
+    page_title="Early Access Platform",
+    layout="centered"
+)
 
 # ---------- STYLES ----------
 st.markdown("""
 <style>
-.title { font-size: 36px; font-weight: 700; }
-.subtitle { font-size: 16px; color: #555; margin-bottom: 20px; }
-
-input, textarea {
-    border-radius: 6px !important;
+.main-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 10px;
 }
 
-button[kind="primary"] {
-    background-color: #111 !important;
-    border-radius: 6px !important;
+.sub-text {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.input-box input {
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 16px 36px;
+    background-color: #111;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 18px;
     font-weight: 600;
+    margin-top: 20px;
+}
+
+.cta-button:hover {
+    background-color: #333;
+}
+
+.footer {
+    margin-top: 60px;
+    text-align: center;
+    font-size: 13px;
+    color: #888;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- STEP 1: USER INPUT ----------
+# ---------- USER INPUT ----------
 interest = st.text_input("Enter your area of interest")
 
-# ---------- STEP 2: DYNAMIC HEADER ----------
+# ---------- DYNAMIC CONTENT ----------
 if interest.strip():
-    st.markdown(f"<div class='title'>Apply for {interest}</div>", unsafe_allow_html=True)
-    st.markdown("<div class='subtitle'>Provide your details to request early access</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='main-title'>Early Access for {interest}</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sub-text'>Submit your request to join the early access list.</div>", unsafe_allow_html=True)
+
+    # ---------- GOOGLE FORM PREFILL ----------
+    encoded_interest = urllib.parse.quote(interest)
+
+    form_url = f"https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?usp=pp_url&entry.123456={encoded_interest}"
+
+    # ---------- CTA BUTTON ----------
+    st.markdown(
+        f'<a href="{form_url}" target="_blank" class="cta-button">Request Invitation</a>',
+        unsafe_allow_html=True
+    )
+
 else:
-    st.markdown("<div class='title'>Early Access Platform</div>", unsafe_allow_html=True)
-    st.markdown("<div class='subtitle'>Enter your interest to begin</div>", unsafe_allow_html=True)
-
-# ---------- STEP 3: INTERNAL FORM ----------
-if interest.strip():
-
-    with st.form("dynamic_form"):
-
-        name = st.text_input("Full Name")
-        email = st.text_input("Email Address")
-
-        submit = st.form_submit_button("Request Invitation")
-
-        if submit:
-
-            # ---------- VALIDATION ----------
-            if not name or not email:
-                st.error("All fields are required")
-
-            elif "@" not in email:
-                st.error("Enter a valid email")
-
-            else:
-                # ---------- SEND TO N8N ----------
-                webhook_url = "https://your-ngrok-url/webhook/waitlist"  # replace this
-
-                data = {
-                    "name": name,
-                    "email": email,
-                    "interest": interest
-                }
-
-                try:
-                    res = requests.post(webhook_url, json=data)
-
-                    if res.status_code == 200:
-                        st.success("Your request has been submitted successfully")
-                    else:
-                        st.error("Submission failed. Try again.")
-
-                except:
-                    st.error("Could not connect to server")
+    st.markdown("<div class='main-title'>Early Access Platform</div>", unsafe_allow_html=True)
+    st.markdown("<div class='sub-text'>Enter your interest to continue.</div>", unsafe_allow_html=True)
 
 # ---------- FOOTER ----------
-st.markdown("---")
-st.write("© 2026 Early Access Platform")
+st.markdown("<div class='footer'>© 2026 Early Access Platform</div>", unsafe_allow_html=True)
