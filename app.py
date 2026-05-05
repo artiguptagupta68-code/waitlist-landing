@@ -5,7 +5,7 @@ import re
 # ---------- CONFIG ----------
 WEBHOOK_URL = "http://localhost:5678/webhook/waitlist"
 # If using ngrok, replace with:
-# WEBHOOK_URL = "https://your-ngrok-url.ngrok-free.dev/webhook/waitlist"
+# WEBHOOK_URL = "http://localhost:5678/webhook/waitlist"
 
 st.set_page_config(page_title="Early Access Platform", layout="centered")
 
