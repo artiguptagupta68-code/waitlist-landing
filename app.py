@@ -3,57 +3,56 @@ import requests
 import re
 
 # ---------- CONFIG ----------
-WEBHOOK_URL = "https://endorphin-camping-quote.ngrok-free.dev/webhook/waitlist"
+WEBHOOK_URL = "http://localhost:5678/webhook/waitlist"
+# If using ngrok, replace with:
+# WEBHOOK_URL = "https://your-ngrok-url.ngrok-free.dev/webhook/waitlist"
 
-st.set_page_config(
-    page_title="Early Access Platform",
-    layout="centered"
-)
+st.set_page_config(page_title="Early Access Platform", layout="centered")
 
 # ---------- STYLING ----------
 st.markdown("""
 <style>
 .main {
-    background-color: #f7f9fc;
+    background-color: #f5f7fb;
 }
 
 .container {
-    background: white;
-    padding: 3rem;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
-    max-width: 650px;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    max-width: 600px;
     margin: auto;
-    margin-top: 50px;
+    margin-top: 60px;
 }
 
 .title {
-    font-size: 32px;
+    font-size: 30px;
     font-weight: 700;
-    color: #111827;
-    margin-bottom: 10px;
+    color: #111;
+    margin-bottom: 8px;
 }
 
 .subtitle {
     font-size: 15px;
-    color: #6b7280;
+    color: #666;
     margin-bottom: 25px;
 }
 
 .stTextInput input {
-    border-radius: 10px;
-    padding: 12px;
-    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #ddd;
 }
 
 div.stButton > button {
     width: 100%;
-    background-color: black;
-    color: white;
     padding: 14px;
+    border-radius: 10px;
+    background-color: #111;
+    color: white;
     font-size: 16px;
     font-weight: 600;
-    border-radius: 10px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -66,7 +65,7 @@ def is_valid_email(email):
 st.markdown('<div class="container">', unsafe_allow_html=True)
 
 st.markdown('<div class="title">Early Access Platform</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Submit your details to request early access tailored to your interest.</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Request early access tailored to your area of interest.</div>', unsafe_allow_html=True)
 
 # ---------- FORM ----------
 with st.form("waitlist_form"):
@@ -78,28 +77,39 @@ with st.form("waitlist_form"):
 
 # ---------- SUBMIT ----------
 if submit:
+
     if not name or not email or not interest:
         st.error("All fields are required.")
 
     elif not is_valid_email(email):
-        st.error("Enter a valid email address.")
+        st.error("Please enter a valid email address.")
 
     else:
         payload = {
-            "name": name,
-            "email": email,
-            "interest": interest
+            "name": name.strip(),
+            "email": email.strip(),
+            "interest": interest.strip()
         }
 
         try:
-            response = requests.post(WEBHOOK_URL, json=payload)
+            response = requests.post(
+                WEBHOOK_URL,
+                json=payload,
+                timeout=5
+            )
 
             if response.status_code == 200:
-                st.success("Request submitted successfully.")
+                st.success("Your request has been submitted successfully.")
             else:
-                st.error("Submission failed. Try again.")
+                st.error("Submission failed. Please try again.")
+
+        except requests.exceptions.ConnectionError:
+            st.error("Cannot connect to server. Make sure n8n is running.")
+
+        except requests.exceptions.Timeout:
+            st.error("Server timeout. Please try again.")
 
         except Exception:
-            st.error("Server connection failed. Please try later.")
+            st.error("Unexpected error occurred.")
 
 st.markdown("</div>", unsafe_allow_html=True)
