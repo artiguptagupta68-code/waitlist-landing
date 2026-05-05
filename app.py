@@ -3,7 +3,7 @@ import requests
 import re
 
 # ---------- CONFIG ----------
-WEBHOOK_URL = "http://localhost:5678/webhook/waitlist"
+WEBHOOK_URL = "https://abc123.ngrok-free.dev/webhook/waitlist"
 # If using ngrok, replace with:
 # WEBHOOK_URL = "http://localhost:5678/webhook/waitlist"
 
