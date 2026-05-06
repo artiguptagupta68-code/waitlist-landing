@@ -2,114 +2,84 @@ import streamlit as st
 import requests
 import re
 
-# ---------- CONFIG ----------
-WEBHOOK_URL = "https://YOUR-NGROK-URL.ngrok-free.app/webhook/waitlist"
-# If using ngrok, replace with:
-# WEBHOOK_URL = "http://localhost:5678/webhook/waitlist"
+# -----------------------
+# CONFIG
+# -----------------------
+WEBHOOK_URL = "http://localhost:5678/webhook/waitlist"
 
-st.set_page_config(page_title="Early Access Platform", layout="centered")
+# -----------------------
+# UI
+# -----------------------
+st.set_page_config(page_title="Waitlist Form", page_icon="🚀")
+st.title("🚀 Join the Waitlist")
 
-# ---------- STYLING ----------
-st.markdown("""
-<style>
-.main {
-    background-color: #f5f7fb;
-}
+st.write("Fill in your details below:")
 
-.container {
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 14px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.05);
-    max-width: 600px;
-    margin: auto;
-    margin-top: 60px;
-}
+# -----------------------
+# INPUT FIELDS
+# -----------------------
+name = st.text_input("Name")
+email = st.text_input("Email")
+interest = st.text_input("Area of Interest")
 
-.title {
-    font-size: 30px;
-    font-weight: 700;
-    color: #111;
-    margin-bottom: 8px;
-}
-
-.subtitle {
-    font-size: 15px;
-    color: #666;
-    margin-bottom: 25px;
-}
-
-.stTextInput input {
-    border-radius: 8px;
-    padding: 10px;
-    border: 1px solid #ddd;
-}
-
-div.stButton > button {
-    width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    background-color: #111;
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# ---------- VALIDATION ----------
+# -----------------------
+# EMAIL VALIDATION
+# -----------------------
 def is_valid_email(email):
-    return re.match(r"[^@]+@[^@]+\.[^@]+", email)
+    pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+    return re.match(pattern, email)
 
-# ---------- UI ----------
-st.markdown('<div class="container">', unsafe_allow_html=True)
+# -----------------------
+# SUBMIT BUTTON
+# -----------------------
+if st.button("Submit"):
 
-st.markdown('<div class="title">Early Access Platform</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Request early access tailored to your area of interest.</div>', unsafe_allow_html=True)
-
-# ---------- FORM ----------
-with st.form("waitlist_form"):
-    name = st.text_input("Full Name")
-    email = st.text_input("Email Address")
-    interest = st.text_input("Area of Interest")
-
-    submit = st.form_submit_button("Request Invitation")
-
-# ---------- SUBMIT ----------
-if submit:
-
+    # Validation
     if not name or not email or not interest:
-        st.error("All fields are required.")
-
+        st.warning("⚠️ Please fill all fields")
+    
     elif not is_valid_email(email):
-        st.error("Please enter a valid email address.")
+        st.warning("⚠️ Please enter a valid email address")
 
     else:
         payload = {
-            "name": name.strip(),
-            "email": email.strip(),
-            "interest": interest.strip()
+            "name": name,
+            "email": email,
+            "interest": interest
         }
 
-        try:
-            response = requests.post(
-                WEBHOOK_URL,
-                json=payload,
-                timeout=5
-            )
+        with st.spinner("Submitting..."):
+            try:
+                response = requests.post(
+                    WEBHOOK_URL,
+                    json=payload,
+                    timeout=10
+                )
 
-            if response.status_code == 200:
-                st.success("Your request has been submitted successfully.")
-            else:
-                st.error("Submission failed. Please try again.")
+                # -----------------------
+                # RESPONSE HANDLING
+                # -----------------------
+                if response.status_code == 200:
 
-        except requests.exceptions.ConnectionError:
-            st.error("Cannot connect to server. Make sure n8n is running.")
+                    st.success("✅ Successfully submitted!")
 
-        except requests.exceptions.Timeout:
-            st.error("Server timeout. Please try again.")
+                    # Try parsing JSON safely
+                    try:
+                        data = response.json()
+                        st.json(data)
+                    except:
+                        st.info("ℹ️ Submitted successfully (no JSON response returned)")
+                        st.text(response.text)
 
-        except Exception:
-            st.error("Unexpected error occurred.")
+                else:
+                    st.error(f"❌ Server error ({response.status_code})")
+                    st.text(response.text)
 
-st.markdown("</div>", unsafe_allow_html=True)
+            except requests.exceptions.Timeout:
+                st.error("⏳ Request timed out. Please try again.")
+
+            except requests.exceptions.ConnectionError:
+                st.error("🔌 Could not connect to server. Is n8n running?")
+
+            except Exception as e:
+                st.error(f"❌ Unexpected error: {str(e)}")
